@@ -24,7 +24,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.martazarate.wordle_copy_2"
     },
     "web": {
       "favicon": "./assets/favicon.png"
