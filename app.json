@@ -14,9 +14,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
@@ -25,7 +23,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.martazarate.wordle_copy_2"
+      "package": "com.martazarate.wordle_copy_2",
+      "permissions": ["READ_CONTACTS", "WRITE_CONTACTS"]
     },
     "web": {
       "favicon": "./assets/favicon.png"

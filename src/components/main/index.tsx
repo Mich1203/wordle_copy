@@ -5,6 +5,7 @@ import React, { FC, useEffect } from "react";
 import { RootStackParams } from "../../../App";
 import { useAppSelector } from "../../hooks/store";
 import { selectToken } from "../../store/auth";
+import { Invite } from "./Invite";
 import { Profile } from "./Profile";
 
 export type MainProps = NativeStackScreenProps<RootStackParams, "Main">;
@@ -36,6 +37,19 @@ export const Main: FC<MainProps> = ({ navigation }) => {
           ),
         }}
         component={Profile}
+      />
+      <Tab.Screen
+        name="Invite"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="user"
+              type="font-awesome"
+              color={focused ? "#00a7f7" : ""}
+            />
+          ),
+        }}
+        component={Invite}
       />
     </Tab.Navigator>
   );

@@ -46,8 +46,8 @@ export const Login: FC = () => {
       else {
         navigation.navigate("Auth", { screen: "Verify" });
       }
-    } catch (error) {
-      Alert.alert("Error", "An error has ocurred. Please try again later.");
+    } catch (error: any) {
+      Alert.alert("Error", error?.message);
       console.error(error);
     }
   };
