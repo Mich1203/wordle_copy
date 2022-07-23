@@ -26,11 +26,17 @@ export type AuthStackParams = {
 export type MainStackParams = {
   Home: undefined;
   Profile: undefined;
+  Invite: undefined;
 };
 
+export type RoomStackParams = {
+  Play: undefined;
+  Room: undefined;
+};
 export type RootStackParams = {
   Auth: NavigatorScreenParams<AuthStackParams>;
   Main: NavigatorScreenParams<MainStackParams>;
+  Room: NavigatorScreenParams<RoomStackParams>;
 };
 
 const RootStack = createNativeStackNavigator();

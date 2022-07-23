@@ -5,6 +5,7 @@ import React, { FC, useEffect } from "react";
 import { RootStackParams } from "../../../App";
 import { useAppSelector } from "../../hooks/store";
 import { selectToken } from "../../store/auth";
+import { Rooms } from "../rooms";
 import { Invite } from "./Invite";
 import { Profile } from "./Profile";
 
@@ -26,6 +27,21 @@ export const Main: FC<MainProps> = ({ navigation }) => {
   return (
     <Tab.Navigator>
       <Tab.Screen
+        name="Home"
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="home"
+              type="font-awesome"
+              color={focused ? "#00a7f7" : ""}
+            />
+          ),
+          headerShown: false,
+          tabBarLabel: "Play",
+        }}
+        component={Rooms}
+      />
+      <Tab.Screen
         name="Profile"
         options={{
           tabBarIcon: ({ focused }) => (
@@ -43,8 +59,10 @@ export const Main: FC<MainProps> = ({ navigation }) => {
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
-              name="user"
-              type="font-awesome"
+              style={{ marginRight: 5 }}
+              size={30}
+              name="person-add"
+              type="ionicons"
               color={focused ? "#00a7f7" : ""}
             />
           ),
