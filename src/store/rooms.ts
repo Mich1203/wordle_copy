@@ -14,7 +14,16 @@ const initialState: RoomsState = {
 export const roomSlice = createSlice({
   name: "room",
   initialState,
-  reducers: {},
+  reducers: {
+    setRoom: (
+      state,
+      action: PayloadAction<{
+        room: IRoom;
+      }>
+    ) => {
+      state.currentRoom = action.payload.room;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addMatcher(
@@ -32,6 +41,7 @@ export const roomSlice = createSlice({
   },
 });
 
+export const { setRoom } = roomSlice.actions;
 export const roomReducer = roomSlice.reducer;
 
 export const selectCurrentRoom = (state: RootState) => state.rooms.currentRoom;

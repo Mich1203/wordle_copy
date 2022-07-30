@@ -1,6 +1,5 @@
 import { FC, useContext } from "react";
 import { StyleSheet, View } from "react-native";
-import { useGetWordQuery } from "../../../services/wordle";
 import { GameContext } from "./Game";
 import { Letter } from "./Letter";
 
@@ -10,7 +9,7 @@ export const Board: FC = () => {
   return (
     <View style={{ ...styles.board, height: 70 * board.length }}>
       {board.map((row, rowIndex) => (
-        <View style={styles.row}>
+        <View key={rowIndex} style={styles.row}>
           {row.map((_, letterIndex) => (
             <Letter
               key={letterIndex}
@@ -28,14 +27,18 @@ export const Board: FC = () => {
 const styles = StyleSheet.create({
   board: {
     width: "100%",
+    flex: 1,
+    justifyContent: 'flex-start',
+    marginVertical: 40,
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "black",
   },
   row: {
     width: "100%",
-    flex: 0.33,
+    minHeight: 70,
+    alignContent: 'center',
     flexDirection: "row",
-    margin: 5,
+    padding: 5,
   },
 });

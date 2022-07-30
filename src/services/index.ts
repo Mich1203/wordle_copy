@@ -16,9 +16,11 @@ export interface LoginRequest {
   password: string;
 }
 
+export const API_URL = "https://wordle-copy-back.herokuapp.com/";
+
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://wordle-copy-back.herokuapp.com/",
+    baseUrl: API_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.token;
       if (token) {

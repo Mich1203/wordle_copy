@@ -11,36 +11,32 @@ export interface IKeyProps {
 
 export const Key: FC<IKeyProps> = ({ keyVal, bigKey }) => {
   const currentRoom = useAppSelector(selectCurrentRoom);
-  const { board, setBoard, currAttempt, setCurrAttempt } =
-    useContext(GameContext);
+  const { board, currAttempt, socket } = useContext(GameContext);
 
   const wordLength = currentRoom?.wordLength ?? 0;
 
   const selectLetter = () => {
-    const currBoard = [...board];
-
+    const currBoard = board.map((arr) => arr.map((letter) => letter));
     if (keyVal === "DELETE") {
-      if (!(currAttempt.attempt === 0 && currAttempt.letter === 0)) {
-        if (currAttempt.letter === 0) {
-          currBoard[currAttempt.attempt - 1][board[0].length - 1] = "";
-          setCurrAttempt({
-            attempt: currAttempt.attempt - 1,
-            letter: board[0].length - 1,
-          });
+      if (!(currAttempt.attempt === 0 && currAttempt.letterPosition === 0)) {
+        if (currAttempt.letterPosition === 0) {
+          return;
         } else {
-          currBoard[currAttempt.attempt][currAttempt.letter - 1] = "";
-          setBoard(currBoard);
-          setCurrAttempt((prev) => ({
-            ...prev,
-            letter: currAttempt.letter - 1, 
-          }));
+          currBoard[currAttempt.attempt][currAttempt.letterPosition - 1] = "";
+          socket?.emit("game-update", currentRoom?.code, currBoard, {
+            attempt: currAttempt,
+            letterPosition: currAttempt.letterPosition - 1,
+          });
         }
       }
       return;
-    } else if (currAttempt.letter === wordLength) return;
-    currBoard[currAttempt.attempt][currAttempt.letter] = keyVal;
-    setBoard(currBoard);
-    setCurrAttempt((prev) => ({ ...prev, letter: currAttempt.letter + 1 }));
+    } else if (currAttempt.letterPosition === wordLength) return;
+    currBoard[currAttempt.attempt][currAttempt.letterPosition] = keyVal;
+    console.log(currBoard);
+    socket?.emit("game-update", currentRoom?.code, currBoard, {
+      attempt: currAttempt,
+      letterPosition: currAttempt.letterPosition + 1,
+    });
   };
 
   const classes = [styles.key, { width: bigKey ? 40 : 23 }];

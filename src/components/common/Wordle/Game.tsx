@@ -1,71 +1,113 @@
 import React, { createContext, useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { useAppSelector } from "../../../hooks/store";
-import { useGetWordQuery } from "../../../services/wordle";
-import { selectCurrentRoom } from "../../../store/rooms";
+import { View, StyleSheet, ToastAndroid, Text } from "react-native";
+import { useAppDispatch, useAppSelector } from "../../../hooks/store";
+import { selectCurrentRoom, setRoom } from "../../../store/rooms";
 import { Board } from "./Board";
 import { Keyboard } from "./Keyboard";
-import { boardDefault, generateBoard } from "./words";
+import { boardDefault } from "./words";
+import socketIOClient, { Socket } from "socket.io-client";
+import { API_URL } from "../../../services";
+import { selectUser } from "../../../store/auth";
+import { IRoom } from "../../../interfaces/rooms";
+import { currentInstancesStatus } from "react-native-mmkv-storage/dist/src/initializer";
 
 type TAttempt = {
   attempt: number;
-  letter: number;
+  letterPosition: number;
 };
 
 export const GameContext = createContext<{
   board: string[][];
-  setBoard: React.Dispatch<React.SetStateAction<string[][]>>;
   currAttempt: TAttempt;
-  setCurrAttempt: React.Dispatch<React.SetStateAction<TAttempt>>;
   checks: boolean[];
   word: string;
+  socket: Socket | null;
 }>({
   board: [[]],
-  setBoard: () => null,
-  currAttempt: { attempt: 0, letter: 0 },
-  setCurrAttempt: () => null,
+  currAttempt: { attempt: 0, letterPosition: 0 },
   checks: [],
   word: "",
+  socket: null,
 });
 
 export const Game = () => {
+  const dispatch = useAppDispatch();
   const currentRoom = useAppSelector(selectCurrentRoom);
-  const [board, setBoard] = useState<string[][]>(
-    boardDefault(5, currentRoom?.wordLength ?? 0)
-  );
-  const { data: words } = useGetWordQuery({
-    length: currentRoom?.wordLength ?? 3,
-  });
+  const currentUser = useAppSelector(selectUser);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
-  const [currAttempt, setCurrAttempt] = useState<TAttempt>({
-    attempt: 0,
-    letter: 0,
-  });
+  const board = currentRoom?.board || boardDefault(5, 5);
+  const currentPlayer = currentRoom?.currentPlayer || currentInstancesStatus;
+  const currAttempt = currentRoom?.state || { attempt: 0, letterPosition: 0 };
 
   const [checks, setChecks] = useState([...Array(5)].map(() => false));
 
-  const currentWord = words?.[0].toUpperCase() ?? "";
+  const nextPlayer = () => {
+    socket?.emit(`cycle-player`, currentRoom?.code, currentPlayer?._id);
+  };
+
+  const nextRound = () => {
+    socket?.emit("next-round", currentRoom?.code);
+  };
+
+  const currentWord =
+    currentRoom?.currentWord
+      .toUpperCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") ?? "";
 
   useEffect(() => {
-    if (currentWord.length !== 0 && currAttempt.letter === currentWord.length) {
+    if (!currentRoom?.code || !currentUser?._id) return;
+
+    const sock = socketIOClient(API_URL);
+    sock.emit("join-room", currentRoom.code, currentUser?._id);
+    sock.on(`joined-${currentRoom.code}-user`, (name: string) =>
+      ToastAndroid.show(`${name} joined the room!`, ToastAndroid.LONG)
+    );
+    sock.on(`left-${currentRoom.code}-user`, (name: string) =>
+      ToastAndroid.show(`${name} left the room!`, ToastAndroid.LONG)
+    );
+    sock.on(`game-${currentRoom.code}-update`, (room: IRoom) => {
+      console.log(room.board);
+      dispatch(setRoom({ room }));
+    });
+    setSocket(sock);
+
+    return () => {
+      sock.emit("leave-room", currentRoom.code, currentUser._id);
+      sock.disconnect();
+      setSocket(null);
+    };
+  }, [currentRoom?.code, currentUser?._id]);
+
+  useEffect(() => {
+    if (
+      currentWord.length !== 0 &&
+      currAttempt.letterPosition === currentWord.length
+    ) {
       const newChecks = [...checks];
       newChecks[currAttempt.attempt] = true;
       setChecks(newChecks);
-      if (board[currAttempt.attempt].join("") === currentWord) {
-        return;
+      if (
+        currentPlayer._id === currentUser?._id &&
+        (board[currAttempt.attempt].join("") === currentWord ||
+          currAttempt.attempt + 1 === currentRoom?.users.length)
+      ) {
+        nextRound();
+      } else if (currentPlayer._id === currentUser?._id) {
+        nextPlayer();
       }
-      setCurrAttempt((prev) => ({ attempt: prev.attempt + 1, letter: 0 }));
     }
-  }, [currAttempt.letter, currentWord]);
+  }, [currAttempt, currentWord]);
   return (
     <View style={styles.gameContainer}>
+      <Text style={styles.topText}>{currentPlayer?.name}'s Turn</Text>
       <GameContext.Provider
         value={{
           board,
-          setBoard,
           currAttempt,
-          setCurrAttempt,
           checks,
+          socket,
           word: currentWord,
         }}
       >
@@ -77,9 +119,17 @@ export const Game = () => {
 };
 
 const styles = StyleSheet.create({
+  topText: {
+    backgroundColor: "red",
+    color: "white",
+    width: "100%",
+    textAlign: "center",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
   gameContainer: {
-    height: '100%',
-    justifyContent: 'space-around',
+    height: "100%",
+    justifyContent: "space-around",
     padding: 20,
     backgroundColor: "#121212",
   },

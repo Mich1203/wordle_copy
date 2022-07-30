@@ -30,7 +30,8 @@ export const Letter: FC<ILetterProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 0.33,
+    flex: 1,
+    maxHeight: 50,
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "grey",
