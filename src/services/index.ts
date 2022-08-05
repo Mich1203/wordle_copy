@@ -16,8 +16,7 @@ export interface LoginRequest {
   password: string;
 }
 
-export const API_URL =
-  "http://192.168.0.100:8080" || "https://wordle-copy-back.herokuapp.com/";
+export const API_URL = "https://wordle-copy-back.herokuapp.com/";
 
 export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({
