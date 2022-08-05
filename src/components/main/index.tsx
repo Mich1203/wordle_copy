@@ -5,7 +5,7 @@ import React, { FC, useEffect } from "react";
 import { RootStackParams } from "../../../App";
 import { useAppSelector } from "../../hooks/store";
 import { selectToken } from "../../store/auth";
-import { Rooms } from "../rooms";
+import { GameStack } from "../rooms";
 import { Invite } from "./Invite";
 import { Profile } from "./Profile";
 
@@ -27,7 +27,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
   return (
     <Tab.Navigator>
       <Tab.Screen
-        name="Home"
+        name="Game"
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -39,7 +39,7 @@ export const Main: FC<MainProps> = ({ navigation }) => {
           headerShown: false,
           tabBarLabel: "Play",
         }}
-        component={Rooms}
+        component={GameStack}
       />
       <Tab.Screen
         name="Profile"

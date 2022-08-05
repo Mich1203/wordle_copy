@@ -15,7 +15,6 @@ export const Board: FC = () => {
               key={letterIndex}
               letterPosition={letterIndex}
               attempt={rowIndex}
-              tryNum={rowIndex}
             />
           ))}
         </View>

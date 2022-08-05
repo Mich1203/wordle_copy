@@ -5,10 +5,12 @@ import { roomsApiSlice } from "../services/rooms";
 
 export interface RoomsState {
   currentRoom: IRoom | null;
+  timer: number;
 }
 
 const initialState: RoomsState = {
   currentRoom: null,
+  timer: 0,
 };
 
 export const roomSlice = createSlice({
@@ -22,6 +24,9 @@ export const roomSlice = createSlice({
       }>
     ) => {
       state.currentRoom = action.payload.room;
+    },
+    setTimer: (state, action: PayloadAction<{ timer: number }>) => {
+      state.timer = action.payload.timer;
     },
   },
   extraReducers: (builder) => {
@@ -41,7 +46,8 @@ export const roomSlice = createSlice({
   },
 });
 
-export const { setRoom } = roomSlice.actions;
+export const { setRoom, setTimer } = roomSlice.actions;
 export const roomReducer = roomSlice.reducer;
 
 export const selectCurrentRoom = (state: RootState) => state.rooms.currentRoom;
+export const selectTimer = (state: RootState) => state.rooms.timer;

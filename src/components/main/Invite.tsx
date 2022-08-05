@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { FlatList, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { FlatList, StyleSheet, ToastAndroid, View } from "react-native";
 
 import * as Contacts from "expo-contacts";
 import { Contact } from "../common/Contact";
@@ -41,7 +41,9 @@ export const Invite: FC = () => {
       />
       <FlatList
         data={contacts.filter(
-          (contact) => !searchTerm || contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+          (contact) =>
+            !searchTerm ||
+            contact.name.toLowerCase().includes(searchTerm.toLowerCase())
         )}
         renderItem={renderItem}
         keyExtractor={keyExtractor}

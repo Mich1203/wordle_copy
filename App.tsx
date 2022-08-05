@@ -31,12 +31,14 @@ export type MainStackParams = {
 
 export type RoomStackParams = {
   Play: undefined;
+  CreateRoom: undefined;
+  JoinRoom: undefined;
   Room: undefined;
 };
 export type RootStackParams = {
   Auth: NavigatorScreenParams<AuthStackParams>;
   Main: NavigatorScreenParams<MainStackParams>;
-  Room: NavigatorScreenParams<RoomStackParams>;
+  Game: NavigatorScreenParams<RoomStackParams>;
 };
 
 const RootStack = createNativeStackNavigator();

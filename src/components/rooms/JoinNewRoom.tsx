@@ -1,61 +1,59 @@
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Button, Input } from "@rneui/themed";
-import { FC, useState } from "react";
-import { Modal, StyleSheet, Text, ToastAndroid, View } from "react-native";
+import { FC, useEffect, useState } from "react";
+import { StyleSheet, Text, ToastAndroid, View } from "react-native";
 import { RootStackParams } from "../../../App";
 import { useJoinRoomMutation } from "../../services/rooms";
 
-export interface IJoinNewRoomProps {
-  isOpen: boolean;
-  close: () => void;
-}
-
-export const JoinNewRoom: FC<IJoinNewRoomProps> = ({ isOpen, close }) => {
+export const JoinNewRoom: FC = () => {
   const [code, setCode] = useState("");
   const [joinRoom, { isLoading }] = useJoinRoomMutation();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
 
-  const handleClose = () => {
-    setCode("");
-    close();
-  };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      setCode("");
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const handleSubmit = async () => {
     try {
-      await joinRoom(code);
-      navigation.navigate("Room", { screen: "Room" });
+      const room = await joinRoom(code).unwrap();
+      if (room) navigation.navigate("Game", { screen: "Room" });
+      else throw new Error("No room found.");
     } catch (error) {
+      console.error("JOIN ROOM ERROR: ", error);
       ToastAndroid.show(
-        "An error has ocurred while creating the room.",
+        "An error has ocurred while joining the room.",
         ToastAndroid.LONG
       );
     }
   };
 
   return (
-    <Modal animationType="slide" visible={isOpen} onRequestClose={handleClose}>
-      <View style={styles.container}>
-        <View>
-          <Text style={styles.inputLabel}>Room Code (6 digits)</Text>
-          <Input
-            value={code}
-            onChangeText={setCode}
-            placeholder="Enter room code."
-            keyboardType="number-pad"
-            maxLength={6}
-          />
-        </View>
-        <Text />
-        <Button
-          title="Join Room"
-          disabled={isLoading || code.length !== 6}
-          loading={isLoading}
-          onPress={handleSubmit}
+    <View style={styles.container}>
+      <View>
+        <Text style={styles.inputLabel}>Room Code (6 digits)</Text>
+        <Input
+          value={code}
+          onChangeText={setCode}
+          placeholder="Enter room code."
+          keyboardType="number-pad"
+          maxLength={6}
         />
       </View>
-    </Modal>
+      <Text />
+      <Button
+        title="Join Room"
+        disabled={isLoading || code.length !== 6}
+        loading={isLoading}
+        onPress={handleSubmit}
+      />
+    </View>
   );
 };
 

@@ -36,7 +36,7 @@ export const VerifyPhone: FC<IVerifyPhoneProps> = () => {
       if (response.valid) navigation.navigate("Main", { screen: "Profile" });
     } catch (error) {
       Alert.alert("Error", "An error has ocurred. Please try again later.");
-      console.error(error);
+      console.error("VERIFY PHONE ERROR:", error);
     } finally {
       setCode("");
       setValidating(false);

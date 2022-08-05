@@ -1,22 +1,17 @@
 import React, { FC, useContext } from "react";
-import { StyleSheet, View, Text, StyleSheetProperties } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { GameContext } from "./Game";
 
 export interface ILetterProps {
   letterPosition: number;
   attempt: number;
-  tryNum: number;
 }
 
-export const Letter: FC<ILetterProps> = ({
-  attempt,
-  letterPosition,
-  tryNum,
-}) => {
-  const { board, checks, word } = useContext(GameContext);
+export const Letter: FC<ILetterProps> = ({ attempt, letterPosition }) => {
+  const { board, word, checks } = useContext(GameContext);
   const letter = board[attempt][letterPosition];
   const classes: object[] = [styles.container];
-  if (checks[tryNum]) {
+  if (checks[attempt]) {
     if (word.includes(letter) && word[letterPosition] === letter)
       classes.push(styles.correct);
     else if (word.includes(letter)) classes.push(styles.almost);

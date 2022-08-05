@@ -1,34 +1,23 @@
+import { useNavigation } from "@react-navigation/native";
 import { Button } from "@rneui/themed";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { StyleSheet, View } from "react-native";
-import { CreateNewRoom } from "./CreateNewRoom";
-import { JoinNewRoom } from "./JoinNewRoom";
+import { useAppNavigation } from "../../hooks/navigation";
 
 export const Play: FC = () => {
-  const [creatingRoom, setCreatingRoom] = useState(false);
-  const [joiningRoom, setJoiningRoom] = useState(false);
-
-  const handleToggleCreate = (value: boolean) => () => {
-    setCreatingRoom(value);
-  };
-
-  const handleToggleJoin = (value: boolean) => () => {
-    setJoiningRoom(value);
-  };
+  const navigation = useAppNavigation();
   return (
     <View style={styles.container}>
       <Button
         title="CREATE ROOM"
         buttonStyle={styles.button}
-        onPress={handleToggleCreate(true)}
+        onPress={() => navigation.navigate("Game", { screen: "CreateRoom" })}
       />
       <Button
         title="JOIN ROOM"
         buttonStyle={styles.button}
-        onPress={handleToggleJoin(true)}
+        onPress={() => navigation.navigate("Game", { screen: "JoinRoom" })}
       />
-      <CreateNewRoom isOpen={creatingRoom} close={handleToggleCreate(false)} />
-      <JoinNewRoom isOpen={joiningRoom} close={handleToggleJoin(false)} />
     </View>
   );
 };

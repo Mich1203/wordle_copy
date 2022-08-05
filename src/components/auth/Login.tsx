@@ -47,8 +47,8 @@ export const Login: FC = () => {
         navigation.navigate("Auth", { screen: "Verify" });
       }
     } catch (error: any) {
-      Alert.alert("Error", error?.message);
-      console.error(error);
+      Alert.alert("Error", error?.data?.message);
+      console.error("LOGIN ERROR:", error);
     }
   };
 

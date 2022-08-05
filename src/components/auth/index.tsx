@@ -22,7 +22,7 @@ const getToken = async () => {
     const token = await storage.getStringAsync("@token");
     return token;
   } catch (error) {
-    console.error(error);
+    console.error("FETCH TOKEN LOCALLY:", error);
   }
 };
 
@@ -39,7 +39,7 @@ export const Auth: FC = () => {
     try {
       await storage.setStringAsync("@token", token);
     } catch (error) {
-      console.error(error);
+      console.error("STORE TOKEN LOCALLY:", error);
     }
   };
 
